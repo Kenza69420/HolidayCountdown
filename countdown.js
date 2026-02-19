@@ -1,7 +1,6 @@
-export function calculateTimeLeft(holidayDateString) {
-    const holidayDate = new Date(holidayDateString + "T00:00:00");
-    const now = new Date();
-    const diff = holidayDate - now;
+export function calculateTimeLeft(dateString) {
+    const holidayDate = new Date(dateString + "T00:00:00");
+    const diff = holidayDate - new Date();
 
     if (diff <= 0) {
         return { days: 0, hours: 0, minutes: 0, seconds: 0 };
@@ -15,6 +14,6 @@ export function calculateTimeLeft(holidayDateString) {
     return { days, hours, minutes, seconds };
 }
 
-export function formatValue(value) {
+export function pad(value) {
     return String(value).padStart(2, "0");
 }
