@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holiday Countdown</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>International Holiday Countdown</h1>
+
+        <div class="country-buttons">
+            <button class="country-btn active" data-country="CZ">🇨🇿 Česko</button>
+            <button class="country-btn" data-country="US">🇺🇸 USA</button>
+            <button class="country-btn" data-country="DE">🇩🇪 Německo</button>
+        </div>
+
+        <div class="holiday-info">
+            <h2 id="holiday-name">Vyberte zemi</h2>
+            <p id="holiday-date"></p>
+        </div>
+
+        <div class="countdown">
+            <div class="time-box">
+                <span id="days">--</span>
+                <small>Dny</small>
+            </div>
+            <span class="separator">:</span>
+            <div class="time-box">
+                <span id="hours">--</span>
+                <small>Hodiny</small>
+            </div>
+            <span class="separator">:</span>
+            <div class="time-box">
+                <span id="minutes">--</span>
+                <small>Minuty</small>
+            </div>
+            <span class="separator">:</span>
+            <div class="time-box">
+                <span id="seconds">--</span>
+                <small>Sekundy</small>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
