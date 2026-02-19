@@ -1,82 +1,57 @@
 import { fetchNextHoliday } from "./api.js";
-import { calculateTimeLeft, formatValue } from "./countdown.js";
+import { calculateTimeLeft, pad } from "./countdown.js";
 
-const countryButtons = document.querySelectorAll(".country-btn");
-const holidayNameEl = document.querySelector(".holiday-name");
-const holidayDateEl = document.querySelector(".holiday-date");
-const loadingEl = document.querySelector(".loading");
+const buttons = document.querySelectorAll(".country-btn");
+const holidayName = document.getElementById("holiday-name");
+const holidayDate = document.getElementById("holiday-date");
 const daysEl = document.getElementById("days");
 const hoursEl = document.getElementById("hours");
 const minutesEl = document.getElementById("minutes");
 const secondsEl = document.getElementById("seconds");
 
 let currentHoliday = null;
-let countdownInterval = null;
-
-function showLoading() {
-    loadingEl.classList.remove("hidden");
-    holidayNameEl.textContent = "";
-    holidayDateEl.textContent = "";
-    daysEl.textContent = "--";
-    hoursEl.textContent = "--";
-    minutesEl.textContent = "--";
-    secondsEl.textContent = "--";
-}
-
-function hideLoading() {
-    loadingEl.classList.add("hidden");
-}
+let timer = null;
 
 function updateCountdown() {
     if (!currentHoliday) return;
 
-    const timeLeft = calculateTimeLeft(currentHoliday.date);
-
-    daysEl.textContent = formatValue(timeLeft.days);
-    hoursEl.textContent = formatValue(timeLeft.hours);
-    minutesEl.textContent = formatValue(timeLeft.minutes);
-    secondsEl.textContent = formatValue(timeLeft.seconds);
+    const time = calculateTimeLeft(currentHoliday.date);
+    daysEl.textContent = pad(time.days);
+    hoursEl.textContent = pad(time.hours);
+    minutesEl.textContent = pad(time.minutes);
+    secondsEl.textContent = pad(time.seconds);
 }
 
-function displayHoliday(holiday) {
+async function selectCountry(code) {
+    if (timer) clearInterval(timer);
+
+    holidayName.textContent = "Načítám...";
+    holidayDate.textContent = "";
+    daysEl.textContent = "--";
+    hoursEl.textContent = "--";
+    minutesEl.textContent = "--";
+    secondsEl.textContent = "--";
+
+    const holiday = await fetchNextHoliday(code);
+    currentHoliday = holiday;
+
+    holidayName.textContent = holiday.name;
     const date = new Date(holiday.date + "T00:00:00");
-    holidayNameEl.textContent = holiday.name;
-    holidayDateEl.textContent = date.toLocaleDateString("cs-CZ", {
+    holidayDate.textContent = date.toLocaleDateString("cs-CZ", {
         weekday: "long",
-        year: "numeric",
-        month: "long",
         day: "numeric",
+        month: "long",
+        year: "numeric"
     });
+
+    updateCountdown();
+    timer = setInterval(updateCountdown, 1000);
 }
 
-async function selectCountry(countryCode) {
-    if (countdownInterval) {
-        clearInterval(countdownInterval);
-    }
-
-    showLoading();
-
-    try {
-        const holiday = await fetchNextHoliday(countryCode);
-        currentHoliday = holiday;
-
-        hideLoading();
-        displayHoliday(holiday);
-        updateCountdown();
-
-        countdownInterval = setInterval(updateCountdown, 1000);
-    } catch (error) {
-        hideLoading();
-        holidayNameEl.textContent = "Chyba při načítání";
-        console.error(error);
-    }
-}
-
-countryButtons.forEach((btn) => {
+buttons.forEach(btn => {
     btn.addEventListener("click", () => {
-        countryButtons.forEach((b) => b.classList.remove("active"));
+        buttons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-
         selectCountry(btn.dataset.country);
     });
 });
